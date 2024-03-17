@@ -15,7 +15,7 @@ function getLocation(city) {
       return response.json();
     })
     .then(function (data) {
-      console.log(`location data: ${JSON.stringify(data)}`);
+      // console.log(`location data: ${JSON.stringify(data)}`);
       if (!data) {
         return;
       } else {
@@ -29,7 +29,7 @@ function getLocation(city) {
 
           // console.log('d', d.city);
           $(function () {
-            let autofill = [`${d[i].city}, ${data[i].states}`];
+            let autofill = [`${data[i].name}, ${data[i].state}`];
             $('#location').autocomplete({
               source: autofill,
             });
@@ -70,7 +70,16 @@ function handleSubmitBtn() {
   }
 }
 
+function handleLocationInputField(event) {
+  event.preventDefault();
+
+  // console.log(event.key);
+  setTimeout(getLocation(locationInput.value), 10000);
+  // getLocation(locationInput.value);
+}
+
 // USER INTERACTIONS =================================
 submitBtn.addEventListener('click', handleSubmitBtn);
+locationInput.addEventListener('input', handleLocationInputField);
 
 // INITIALIZATION ====================================
