@@ -3,10 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <title>Document</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous" />
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>jQuery UI Autocomplete - Default functionality</title>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+        <link rel="stylesheet" href="./assets/css/style.css" />
+        <title>Weather App</title>
+      </head>
+      <body class="bg-dark">
+        <header>
+          <nav class="navbar bg-black">
+            <div class="container-fluid">
+              <h1 class="navbar-brand text-light">Weather Forecast</h1>
+              <form class="d-flex" role="search">
+                <label for="location" class="form-label m-2 text-light">City</label>
+                <input
+                  aria-label="Search"
+                  class="form-control me-2"
+                  id="location"
+                  placeholder="Enter City, State"
+                  type="search" />
+                <button class="btn btn-outline-light bg-dark text-light" id="submit" type="submit">
+                  Search
+                </button>
+              </form>
+            </div>
+          </nav>
+        </header>
+        <section>
+          <!-- if no history don't display -->
+          <nav class="navbar bg-black">
+            <div class="container-fluid">
+              <h2 class="navbar-brand text-light">History</h2>
+              <div id="history" class="d-flex flex-row-reverse mw-100"></div>
+            </div>
+          </nav>
+        </section>
+        <script
+          src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+          integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+          crossorigin="anonymous"></script>
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+          integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+          crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script type="module" src="./assets/js/script.js"></script>
+      </body>
+    </html>
   </head>
-  <body>
-    <script src="./assets/js/script.js"></script>
-  </body>
 </html>
