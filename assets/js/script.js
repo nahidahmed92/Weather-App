@@ -20,14 +20,16 @@ function getLocation(city) {
         return;
       } else {
         for (let i = 0; i < data.length; i++) {
-          const d = {
+          let d = {
             city: data[i].name,
             latitude: data[i].lat,
             longitude: data[i].lon,
             states: data[i].state,
           };
+
+          // console.log('d', d.city);
           $(function () {
-            const autofill = [`${data[i].name}, ${data[i].state}`];
+            let autofill = [`${d[i].city}, ${data[i].states}`];
             $('#location').autocomplete({
               source: autofill,
             });
@@ -37,6 +39,38 @@ function getLocation(city) {
     });
 }
 
+function handleSubmitBtn() {
+  event.preventDefault();
+
+  if (!locationInput.value) {
+    alert('Please enter a city');
+  } else {
+    for (let i = 0; i < locationInput.value.length; i++) {
+      const data = getLocation(locationInput.value);
+      console.log('data: ', data);
+      const buttonEl = document.createElement('button');
+      buttonEl.setAttribute(
+        'class',
+        'btn btn-outline-light bg-dark text-capitalize text-light mx-2'
+      );
+      buttonEl.setAttribute('type', 'submit');
+      // buttonEl.textContent = `${data[i].name} - ${data[i].state}`;
+      buttonEl.textContent = `${locationInput.value}`;
+      historyEl.appendChild(buttonEl);
+
+      let d = {
+        city: data[i].name,
+        latitude: data[i].lat,
+        longitude: data[i].lon,
+        states: data[i].state,
+      };
+      // console.log(d);
+    }
+    // getLocation(locationInput.value);
+  }
+}
+
 // USER INTERACTIONS =================================
+submitBtn.addEventListener('click', handleSubmitBtn);
 
 // INITIALIZATION ====================================
