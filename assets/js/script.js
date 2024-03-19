@@ -7,40 +7,61 @@ const weeklyForecastEl = document.querySelector('#weekly-forecast');
 
 // DATA ==============================================
 const apiKey = '689f34b1104ca12a133c789e52a71a39';
+let saveCity = JSON.parse(localStorage.getItem('searchedCity')) || [];
 
 // FUNCTIONS ========================================
 function getLocation(input) {
-  const locationURL = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
+  // ready array from localStorage or set an empty array
+  let saveCity = JSON.parse(localStorage.getItem('searchedCity')) || [];
 
+  const locationURL = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
   fetch(locationURL)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      // the actual data
+      // full location data
       console.log(`location data: ${JSON.stringify(data)}`);
 
-      const cityInfo = data[0];
-      const cityName = data[0].name;
-      const cityLat = data[0].lat;
-      const cityLon = data[0].lon;
+      const searchHistory = {
+        cityInfo: data[0],
+        cityName: data[0].name,
+        cityLat: data[0].lat,
+        cityLon: data[0].lon,
+      };
 
-      console.log(`${cityName}, ${cityLat}, ${cityLon}`);
-      getWeather(cityInfo);
-      getWeekForecast(cityInfo);
+      getWeather(searchHistory.cityInfo);
+      getWeekForecast(searchHistory.cityInfo);
+
+      // push data to array
+      saveCity.push(searchHistory);
+      // save to localStorage
+      localStorage.setItem('searchedCity', JSON.stringify(saveCity));
+
+      // remove spaces in name
+      const cityNameTrim = searchHistory.cityName.replace(' ', '');
+      // if button name is not already saved then continue
+      if (!document.querySelector(`#historySavedBtn-${cityNameTrim}`)) {
+        const historyBtn = document.createElement('button');
+        historyBtn.setAttribute('class', 'btn btn-outline-light bg-dark text-light ms-2');
+        historyBtn.setAttribute('id', `historySavedBtn-${cityNameTrim}`);
+        historyBtn.setAttribute('type', 'submit');
+        historyBtn.textContent = searchHistory.cityName;
+        historyEl.appendChild(historyBtn);
+      }
     });
 }
 
 function getWeather(cityInfo) {
-  console.log('weather - pulled data from getLocation: ', cityInfo);
   const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${cityInfo.lat}&lon=${cityInfo.lon}&units=imperial&lang=en&appid=${apiKey}`;
   fetch(weatherURL)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      // this is the actual data
+      // full weather data
       console.log('weather data: ', data);
+      // save data to function
       retrieveWeatherData({
         city: data.name,
         desc1: data.weather[0].main,
@@ -54,8 +75,9 @@ function getWeather(cityInfo) {
 }
 
 function getWeekForecast(cityInfo) {
+  // reset 5 day forecast before adding weekly information
   weeklyForecastEl.innerHTML = '';
-  console.log('weekForecast - pulled data from getLocation: ', cityInfo);
+
   const weekForecastURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${cityInfo.lat}&lon=${cityInfo.lon}&units=imperial&lang=en&appid=${apiKey}`;
   fetch(weekForecastURL)
     .then(function (response) {
@@ -64,9 +86,10 @@ function getWeekForecast(cityInfo) {
     .then(function (data) {
       // actual data of week forecast
       console.log('week forecast:', data.list);
+      // data.list is where the information is saved for weekly weather
       const weekForecast = data.list;
-      console.log('weekforecast length: ', weekForecast.length);
 
+      // create header and card
       const divCardEl = document.createElement('div');
       const h3El = document.createElement('h3');
       const divRow = document.createElement('div');
@@ -81,9 +104,13 @@ function getWeekForecast(cityInfo) {
       divRow.setAttribute('class', 'row');
       divCardEl.appendChild(divRow);
 
+      // create individual cards for 5 days
       for (let i = 0; i < weekForecast.length; i++) {
+        // format time and day
         const time = dayjs.unix(weekForecast[i].dt).format('hh a');
         const date = dayjs.unix(weekForecast[i].dt).format('ddd MM/DD');
+
+        // search for list for 2pm to get an average mid day result
         if (time === '02 pm') {
           console.log('picking 3pm', time);
           retrieveWeekForecastData(
@@ -105,6 +132,7 @@ function getWeekForecast(cityInfo) {
 }
 
 function retrieveWeatherData(data) {
+  // CREATE
   const divCardEl = document.createElement('div');
   const h3El = document.createElement('h3');
   const divRow = document.createElement('div');
@@ -118,6 +146,7 @@ function retrieveWeatherData(data) {
   const desc1El = document.createElement('p');
   const desc2El = document.createElement('p');
 
+  // BUILD & PLACE
   divCardEl.setAttribute('class', 'card text-center');
   currentWeatherEl.appendChild(divCardEl);
 
@@ -176,34 +205,34 @@ function retrieveWeatherData(data) {
 }
 
 function retrieveWeekForecastData(data, divRow) {
+  // CREATE
   const cardBodyEl = document.createElement('div');
-  cardBodyEl.setAttribute('class', 'col-2 card-body');
-  divRow.appendChild(cardBodyEl);
-
   const h4El = document.createElement('h4');
+  const imgEl = document.createElement('img');
+  const tempEl = document.createElement('p');
+  const windEl = document.createElement('p');
+  const humidEl = document.createElement('p');
+
+  // BUILD
+  cardBodyEl.setAttribute('class', 'col-2 card-body');
   h4El.setAttribute('class', 'card-title');
   h4El.textContent = data.time;
-  cardBodyEl.appendChild(h4El);
-
-  const imgEl = document.createElement('img');
   imgEl.setAttribute('class', 'bg-dark-subtle rounded-circle');
   imgEl.setAttribute('src', `https://openweathermap.org/img/wn/${data.icon}@2x.png`);
   imgEl.setAttribute('alt', 'weather icon');
-  cardBodyEl.appendChild(imgEl);
-
-  const tempEl = document.createElement('p');
   tempEl.setAttribute('class', 'card-text');
   tempEl.textContent = `Temp: ${data.temp}°F`;
-  cardBodyEl.appendChild(tempEl);
-
-  const windEl = document.createElement('p');
   windEl.setAttribute('class', 'card-text');
   windEl.textContent = `Wind: ${data.wind} MPH`;
-  cardBodyEl.appendChild(windEl);
-
-  const humidEl = document.createElement('p');
   humidEl.setAttribute('class', 'card-text');
   humidEl.textContent = `Wind: ${data.humid}%`;
+
+  // PLACE
+  divRow.appendChild(cardBodyEl);
+  cardBodyEl.appendChild(h4El);
+  cardBodyEl.appendChild(imgEl);
+  cardBodyEl.appendChild(tempEl);
+  cardBodyEl.appendChild(windEl);
   cardBodyEl.appendChild(humidEl);
 }
 
@@ -214,11 +243,26 @@ function handleSubmitBtn(event) {
   } else {
     // reset weather cards
     currentWeatherEl.innerHTML = '';
+    // call getlocation with input value
     getLocation(locationInput.value);
+
+    // reset input field
+    locationInput.value = '';
+  }
+}
+
+function handleSearchHistoryBtn(event) {
+  const target = event.target;
+  // locate dynamic button
+  if (target.tagName === 'BUTTON' && target.id.startsWith('historySavedBtn')) {
+    const cityName = target.textContent;
+    currentWeatherEl.innerHTML = '';
+    getLocation(cityName);
   }
 }
 
 // USER INTERACTIONS =================================
 submitBtn.addEventListener('click', handleSubmitBtn);
+historyEl.addEventListener('click', handleSearchHistoryBtn);
 
 // INITIALIZATION ====================================
