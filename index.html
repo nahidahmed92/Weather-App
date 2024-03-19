@@ -14,7 +14,7 @@
   </head>
   <body class="bg-dark">
     <header>
-      <nav class="navbar bg-black">
+      <nav class="navbar bg-black" role="navigation">
         <div class="container-fluid">
           <h1 class="navbar-brand text-light">Weather Forecast</h1>
           <form class="d-flex" role="search">
@@ -25,14 +25,18 @@
               id="location"
               placeholder="Enter City Only"
               type="search" />
-            <button class="btn btn-outline-light bg-dark text-light" id="submit" type="submit">
+            <button
+              aria-label="search button"
+              class="btn btn-outline-light bg-dark text-light"
+              id="submit"
+              type="submit">
               Search
             </button>
           </form>
         </div>
       </nav>
     </header>
-    <section>
+    <section id="history-nav">
       <!-- if no history don't display -->
       <nav class="navbar bg-black">
         <div class="container-fluid">

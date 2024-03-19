@@ -1,8 +1,9 @@
 // DEPENDENCIES (DOM Elements) =======================
+const currentWeatherEl = document.querySelector('#current-weather');
+const historyEl = document.querySelector('#history');
+const historyNav = document.querySelector('#history-nav');
 const locationInput = document.querySelector('#location');
 const submitBtn = document.querySelector('#submit');
-const historyEl = document.querySelector('#history');
-const currentWeatherEl = document.querySelector('#current-weather');
 const weeklyForecastEl = document.querySelector('#weekly-forecast');
 
 // DATA ==============================================
@@ -20,14 +21,33 @@ function getLocation(input) {
       // the actual data
       console.log(`location data: ${JSON.stringify(data)}`);
 
-      const cityInfo = data[0];
-      const cityName = data[0].name;
-      const cityLat = data[0].lat;
-      const cityLon = data[0].lon;
+      const searchHistory = {
+        cityInfo: data[0],
+        cityName: data[0].name,
+        cityLat: data[0].lat,
+        cityLon: data[0].lon,
+      };
 
-      console.log(`${cityName}, ${cityLat}, ${cityLon}`);
-      getWeather(cityInfo);
-      getWeekForecast(cityInfo);
+      getWeather(searchHistory.cityInfo);
+      getWeekForecast(searchHistory.cityInfo);
+
+      // push data to array
+      saveCity.push(searchHistory);
+      // save to localStorage
+      localStorage.setItem('searchedCity', JSON.stringify(saveCity));
+
+      // remove spaces in name
+      const cityNameTrim = searchHistory.cityName.replace(' ', '');
+      // if button name is not already saved then continue
+      if (!document.querySelector(`#historySavedBtn-${cityNameTrim}`)) {
+        const historyBtn = document.createElement('button');
+        historyBtn.setAttribute('aria-label', `button for ${searchHistory.cityName}`);
+        historyBtn.setAttribute('class', 'btn btn-outline-light bg-dark text-light ms-2');
+        historyBtn.setAttribute('id', `historySavedBtn-${cityNameTrim}`);
+        historyBtn.setAttribute('type', 'submit');
+        historyBtn.textContent = searchHistory.cityName;
+        historyEl.appendChild(historyBtn);
+      }
     });
 }
 
@@ -85,7 +105,6 @@ function getWeekForecast(cityInfo) {
         const time = dayjs.unix(weekForecast[i].dt).format('hh a');
         const date = dayjs.unix(weekForecast[i].dt).format('ddd MM/DD');
         if (time === '02 pm') {
-          console.log('picking 3pm', time);
           retrieveWeekForecastData(
             {
               desc1: weekForecast[i].weather[0].main,
@@ -160,9 +179,10 @@ function retrieveWeatherData(data) {
   );
   divRow.appendChild(divCardBody2El);
 
+  imgEl.setAttribute('alt', 'weather icon');
+  imgEl.setAttribute('aria-label', `weather icon - ${data.desc1}`);
   imgEl.setAttribute('class', 'bg-dark-subtle rounded-circle');
   imgEl.setAttribute('src', `https://openweathermap.org/img/wn/${data.icon}@2x.png`);
-  imgEl.setAttribute('alt', 'weather icon');
   divCardBody2El.appendChild(imgEl);
 
   desc1El.setAttribute('id', 'desc1');
@@ -183,15 +203,11 @@ function retrieveWeekForecastData(data, divRow) {
   const h4El = document.createElement('h4');
   h4El.setAttribute('class', 'card-title');
   h4El.textContent = data.time;
-  cardBodyEl.appendChild(h4El);
-
-  const imgEl = document.createElement('img');
+  imgEl.setAttribute('alt', 'weather icon');
+  imgEl.setAttribute('aria-label', `weather icon - ${data.desc1}`);
   imgEl.setAttribute('class', 'bg-dark-subtle rounded-circle');
   imgEl.setAttribute('src', `https://openweathermap.org/img/wn/${data.icon}@2x.png`);
   imgEl.setAttribute('alt', 'weather icon');
-  cardBodyEl.appendChild(imgEl);
-
-  const tempEl = document.createElement('p');
   tempEl.setAttribute('class', 'card-text');
   tempEl.textContent = `Temp: ${data.temp}°F`;
   cardBodyEl.appendChild(tempEl);
@@ -222,3 +238,22 @@ function handleSubmitBtn(event) {
 submitBtn.addEventListener('click', handleSubmitBtn);
 
 // INITIALIZATION ====================================
+window.onload = () => {
+  historyNav.innerHTML = '';
+  // on load receive current location weather
+  // this information was pulled from Xpert learning assisstant
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      console.log('Latitude: ' + latitude);
+      console.log('Longitude: ' + longitude);
+
+      const cityInfo = { lat: latitude, lon: longitude };
+      getWeather(cityInfo);
+      getWeekForecast(cityInfo);
+    });
+  } else {
+    console.log('Geolocation is not supported by this browser.');
+  }
+};
