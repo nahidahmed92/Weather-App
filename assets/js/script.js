@@ -2,7 +2,7 @@
 const locationInput = document.querySelector('#location');
 const submitBtn = document.querySelector('#submit');
 const historyEl = document.querySelector('#history');
-const currentWeatherEl = document.querySelector('section');
+const currentWeatherEl = document.querySelector('#current-weather');
 
 // DATA ==============================================
 const apiKey = '689f34b1104ca12a133c789e52a71a39';
@@ -64,8 +64,7 @@ function retrieveWeatherData(data) {
   const windEl = document.createElement('p');
   const humidEl = document.createElement('p');
   const divCardBody2El = document.createElement('div');
-  const svgEl = document.createElement('svg');
-  const pathEl = document.createElement('path');
+  const imgEl = document.createElement('img');
   const desc1El = document.createElement('p');
   const desc2El = document.createElement('p');
 
@@ -81,7 +80,10 @@ function retrieveWeatherData(data) {
     divRow.setAttribute('class', 'row');
     divCardEl.appendChild(divRow);
 
-    divCardBodyEl.setAttribute('class', 'col-2 card-body');
+    divCardBodyEl.setAttribute(
+      'class',
+      'col-2 card-body d-flex flex-column justify-content-between align-items-center'
+    );
     divRow.appendChild(divCardBodyEl);
 
     h4El.setAttribute('class', 'card-title');
@@ -109,22 +111,16 @@ function retrieveWeatherData(data) {
   }
 
   if (data.icon) {
-    divCardBody2El.setAttribute('class', 'col-2 card-body');
+    divCardBody2El.setAttribute(
+      'class',
+      'col-2 card-body d-flex flex-column justify-content-between align-items-center'
+    );
     divRow.appendChild(divCardBody2El);
 
-    svgEl.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svgEl.setAttribute('width', '150');
-    svgEl.setAttribute('height', '150');
-    svgEl.setAttribute('fill', 'currentColor');
-    svgEl.setAttribute('class', 'bi bi-cloud-haze-fill');
-    divCardBody2El.appendChild(svgEl);
-
-    pathEl.setAttribute(
-      'd',
-      'M4 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m-3 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m2 2a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M13.405 4.027a5.001 5.001 0 0 0-9.499-1.004A3.5 3.5 0 1 0 3.5 10H13a3 3 0 0 0 .405-5.973'
-    );
-    pathEl.setAttribute('transform', 'scale(8)');
-    svgEl.appendChild(pathEl);
+    imgEl.setAttribute('class', 'bg-dark rounded-circle');
+    imgEl.setAttribute('src', `https://openweathermap.org/img/wn/${data.icon}@2x.png`);
+    imgEl.setAttribute('alt', 'weather icon');
+    divCardBody2El.appendChild(imgEl);
   }
 
   if (data.desc1) {
@@ -146,9 +142,9 @@ function handleSubmitBtn(event) {
   if (!locationInput.value) {
     alert('Please enter a city');
   } else {
+    // reset current weather card
     currentWeatherEl.innerHTML = '';
     getLocation(locationInput.value);
-    // console.log('cityInfo: ', cityInfo);
   }
 }
 
