@@ -14,7 +14,7 @@ function getLocation(input) {
   // ready array from localStorage or set an empty array
   let saveCity = JSON.parse(localStorage.getItem('searchedCity')) || [];
 
-  const locationURL = `http://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
+  const locationURL = `https://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
   fetch(locationURL)
     .then(function (response) {
       return response.json();
