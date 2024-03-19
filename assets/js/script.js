@@ -1,7 +1,6 @@
 // DEPENDENCIES (DOM Elements) =======================
 const currentWeatherEl = document.querySelector('#current-weather');
 const historyEl = document.querySelector('#history');
-const historyNav = document.querySelector('#history-nav');
 const locationInput = document.querySelector('#location');
 const submitBtn = document.querySelector('#submit');
 const weeklyForecastEl = document.querySelector('#weekly-forecast');
@@ -271,7 +270,6 @@ historyEl.addEventListener('click', handleSearchHistoryBtn);
 
 // INITIALIZATION ====================================
 window.onload = () => {
-  historyNav.innerHTML = '';
   // on load receive current location weather
   // this information was pulled from Xpert learning assisstant
   if (navigator.geolocation) {
