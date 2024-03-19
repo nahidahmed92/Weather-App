@@ -11,7 +11,7 @@ let saveCity = JSON.parse(localStorage.getItem('searchedCity')) || [];
 
 // FUNCTIONS ========================================
 function getLocation(input) {
-  // ready array from localStorage or set an empty array
+  // read array from localStorage or set an empty array
   let saveCity = JSON.parse(localStorage.getItem('searchedCity')) || [];
 
   const locationURL = `https://api.openweathermap.org/geo/1.0/direct?q=${input}&limit=5&appid=${apiKey}`;
@@ -246,7 +246,7 @@ function handleSubmitBtn(event) {
   } else {
     // reset weather cards
     currentWeatherEl.innerHTML = '';
-    // call getlocation with input value
+    // call getLocation with input value
     getLocation(locationInput.value);
 
     // reset input field
@@ -269,21 +269,18 @@ submitBtn.addEventListener('click', handleSubmitBtn);
 historyEl.addEventListener('click', handleSearchHistoryBtn);
 
 // INITIALIZATION ====================================
-window.onload = () => {
-  // on load receive current location weather
-  // this information was pulled from Xpert learning assisstant
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      console.log('Latitude: ' + latitude);
-      console.log('Longitude: ' + longitude);
+// this information was pulled from Xpert learning assistant
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function (position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    console.log('Latitude: ' + latitude);
+    console.log('Longitude: ' + longitude);
 
-      const cityInfo = { lat: latitude, lon: longitude };
-      getWeather(cityInfo);
-      getWeekForecast(cityInfo);
-    });
-  } else {
-    console.log('Geolocation is not supported by this browser.');
-  }
-};
+    const cityInfo = { lat: latitude, lon: longitude };
+    getWeather(cityInfo);
+    getWeekForecast(cityInfo);
+  });
+} else {
+  console.log('Geolocation is not supported by this browser.');
+}
